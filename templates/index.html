@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Safe Space</title>
+    <style>
+        body { font-family: Arial; max-width: 600px; margin: auto; padding: 2rem; }
+        #chat { border: 1px solid #ccc; padding: 1rem; height: 300px; overflow-y: scroll; margin-bottom: 1rem; }
+        .msg { margin: 0.5rem 0; }
+        .user { font-weight: bold; }
+        .bot { color: darkgreen; }
+    </style>
+</head>
+<body>
+    <h1>Safe Space - Talk to the Mediator</h1>
+    <div id="chat"></div>
+    <input id="userInput" type="text" placeholder="Type your conflict..." style="width: 80%;">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById("userInput");
+            const chat = document.getElementById("chat");
+
+            const userMsg = input.value;
+            chat.innerHTML += `<div class="msg user">You: ${userMsg}</div>`;
+            input.value = "";
+
+            const response = await fetch("/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: userMsg })
+            });
+
+            const data = await response.json();
+            chat.innerHTML += `<div class="msg bot">Safe Space: ${data.reply}</div>`;
+            chat.scrollTop = chat.scrollHeight;
+        }
+    </script>
+</body>
+</html>
