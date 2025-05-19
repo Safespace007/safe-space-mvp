@@ -12,17 +12,17 @@ def ask():
     user_message = request.json["message"]
 
     try:
-        # Call Hugging Face public chatbot (no key needed)
+        # Free public Hugging Face model (no token needed)
         hf_response = requests.post(
             "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium",
-            headers={"Authorization": f"Bearer YOUR_HF_TOKEN"},  # Optional if you have a HuggingFace token
             json={"inputs": {
                 "text": user_message
             }}
         )
+
         data = hf_response.json()
 
-        # Extract generated text
+        # Extract generated text (fallback message included)
         reply = data.get("generated_text", "I'm here for you, but I didn’t quite understand that.")
 
         return jsonify({"reply": reply})
