@@ -12,18 +12,23 @@ def ask():
     user_message = request.json["message"]
 
     try:
-        # Free public Hugging Face model (no token needed)
+        prompt = f"""<|system|>
+You are Safe Space, a calm, thoughtful, emotionally supportive AI that helps users feel understood and guided when they express emotional conflict.
+</s>
+<|user|>
+{user_message}
+</s>
+<|assistant|>"""
+
         hf_response = requests.post(
-            "https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium",
-            json={"inputs": {
-                "text": user_message
-            }}
+            "https://api-inference.huggingface.co/models/OpenAssistant/oasst-sft-6-llama-30b",
+            headers={"Accept": "application/json"},
+            json={"inputs": prompt}
         )
 
         data = hf_response.json()
 
-        # Extract generated text (fallback message included)
-        reply = data.get("generated_text", "I'm here for you, but I didn’t quite understand that.")
+        reply = data.get("generated_text", "I'm listening. Tell me more about how you feel.")
 
         return jsonify({"reply": reply})
     except Exception as e:
